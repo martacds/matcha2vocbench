@@ -36,22 +36,9 @@ public class DefaultApiController implements DefaultApi {
     	serviceMetadata.setService("MATCHA");
     	serviceMetadata.setVersion("1.0");
     	serviceMetadata.setStatus("active");
-//    	serviceMetadata.setDocumentation(URI.create("https://github.com/liseda-lab/Matcha"));
     	serviceMetadata.setSpecs(Arrays.asList("http://art.uniroma2.it/maple/alignment-services-3.1.yaml"));
     	
     	return new ResponseEntity<>(serviceMetadata, HttpStatus.OK);
-    	
-//        String accept = request.getHeader("Accept");
-//        if (accept != null && accept.contains("application/json")) {
-//            try {
-//                return new ResponseEntity<ServiceMetadata>(objectMapper.readValue("{\r\n  \"service\" : \"Matcha REST API\",\r\n  \"version\" : 1.0,\r\n  \"status\" : \"active\",\r\n  \"documentation\" : \"na\",\r\n  \"specs\" : [ \"https://github.com/liseda-lab/Matcha\" ]\r\n}", ServiceMetadata.class), HttpStatus.OK);
-//            } catch (IOException e) {
-//                log.error("Couldn't serialize response for content type application/json", e);
-//                return new ResponseEntity<ServiceMetadata>(HttpStatus.INTERNAL_SERVER_ERROR);
-//            }
-//        }
-
-//        return new ResponseEntity<ServiceMetadata>(HttpStatus.OK);
     }
 
 }
