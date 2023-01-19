@@ -64,22 +64,14 @@ public class TasksApiController implements TasksApi {
 	public ResponseEntity<Void> deleteTaskByID(@Parameter(in = ParameterIn.PATH, description = "Task ID", required=true, schema=@Schema()) @PathVariable("id") String id) {
 		String accept = request.getHeader("Accept");
 
-		// remove run from logs and files from folders
+		// remove result files
 		File result = new File(env.getProperty("repository.path") +  "/results/" + id + ".owl");
-		//		File log = new File(env.getProperty("repository.path") + "/logs/" + id + ".txt");
-
 		if(result.delete()) {
 			System.out.println("Task results were deleted successfully");
 		}
 		else {
 			System.out.println("Failed to delete the task results");
 		}
-		//		if(log.delete()) {
-		//			System.out.println("Task log were deleted successfully");
-		//		}
-		//		else {
-		//			System.out.println("Failed to delete the task log");
-		//		}
 
 		return new ResponseEntity<Void>(HttpStatus.OK);
 	}
@@ -146,7 +138,7 @@ public class TasksApiController implements TasksApi {
 				// get data for matching task
 				String source = sd.getLeftDataset().getAtId(); // need the source URI
 				String target = sd.getRightDataset().getAtId(); // need the target URI
-				// create id
+				// create id (from genoma)
 				String id = DigestUtils.sha1Hex(source + target + Math.random());
 
 				///// Matcha section
@@ -178,15 +170,7 @@ public class TasksApiController implements TasksApi {
 				task.setRightDataset(sd.getRightDataset().getAtId());
 				task.setStatus("completed");
 
-				// final Result res = new Result(taskReport.getLeftDataset().getAtId(),taskReport.getRightDataset().getAtId(), "file:///" + engine, "file:///" + basePath);
-				//        		task.setId(result.getAlignmentId()); // Result is a genoma thing 
-				//        		task.setLeftDataset(result.getOntology1());
-				//        		task.setRightDataset(result.getOntology2());
-
-				//              return new ResponseEntity<Task>(objectMapper.readValue("{\r\n  \"id\" : \"c27d77380cf4d0bcdd5529eef1f020871d5f95c2\",\r\n  \"leftDataset\" : \"http://example.org/void.ttl#EuroVoc\",\r\n  \"rightDataset\" : \"http://example.org/void.ttl#TESEO\",\r\n  \"submissionTime\" : \"202-02-10T18:00:00+01:00\",\r\n  \"startTime\" : \"202-02-10T18:00:30+01:00\",\r\n  \"status\" : \"running\",\r\n  \"progress\" : 60\r\n}", Task.class), HttpStatus.NOT_IMPLEMENTED);
-
 				return new ResponseEntity<Task>(task, HttpStatus.CREATED);
-				// this exception is never thrown
 			} catch (IOException e) {
 				log.error("Couldn't serialize response for content type application/json", e);
 				return new ResponseEntity<Task>(HttpStatus.INTERNAL_SERVER_ERROR);
