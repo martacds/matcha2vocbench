@@ -1,6 +1,7 @@
 package io.swagger.api;
 
 import io.swagger.model.Matcher;
+import io.swagger.model.Pairing;
 import io.swagger.model.ScenarioDefinition;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
@@ -30,6 +31,7 @@ import javax.validation.constraints.*;
 import javax.validation.Valid;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -70,6 +72,8 @@ public class MatchersApiController implements MatchersApi {
 			try {
 
 				return new ResponseEntity<List<Matcher>>(objectMapper.readValue("[ {\r\n  \"id\" : \"Automatic Matcher\",\r\n  \"description\" : \"Runs a combination of matchers tailored to the matching task\"\r\n  }\r\n]", List.class), HttpStatus.CREATED);
+
+				//                return new ResponseEntity<List<Matcher>>(objectMapper.readValue("[ {\r\n  \"id\" : \"example-matcher\",\r\n  \"description\" : \"example matcher\",\r\n  \"settings\" : {\r\n    \"type\" : \"object\",\r\n    \"properties\" : {\r\n      \"structuralFeatures\" : {\r\n        \"description\" : \"whether to use structural features or not\",\r\n        \"type\" : \"boolean\",\r\n        \"default\" : true\r\n      },\r\n      \"synonymExpansion\" : {\r\n        \"description\" : \"whether to do synonym expansion or not\",\r\n        \"type\" : \"boolean\",\r\n        \"default\" : true\r\n      }\r\n    }\r\n  }\r\n}, {\r\n  \"id\" : \"example-matcher\",\r\n  \"description\" : \"example matcher\",\r\n  \"settings\" : {\r\n    \"type\" : \"object\",\r\n    \"properties\" : {\r\n      \"structuralFeatures\" : {\r\n        \"description\" : \"whether to use structural features or not\",\r\n        \"type\" : \"boolean\",\r\n        \"default\" : true\r\n      },\r\n      \"synonymExpansion\" : {\r\n        \"description\" : \"whether to do synonym expansion or not\",\r\n        \"type\" : \"boolean\",\r\n        \"default\" : true\r\n      }\r\n    }\r\n  }\r\n} ]", List.class), HttpStatus.NOT_IMPLEMENTED);
 			} catch (IOException e) {
 				log.error("Couldn't serialize response for content type application/json", e);
 				return new ResponseEntity<List<Matcher>>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -81,12 +85,22 @@ public class MatchersApiController implements MatchersApi {
 	public ResponseEntity<List<Matcher>> searchMatchers(@Parameter(in = ParameterIn.DEFAULT, description = "", schema=@Schema()) @Valid @RequestBody ScenarioDefinition body) {
 		String accept = request.getHeader("Accept");
 		if (accept != null && accept.contains("application/json")) {
-			try {
-				return new ResponseEntity<List<Matcher>>(objectMapper.readValue("[ {\r\n  \"id\" : \"example-matcher\",\r\n  \"description\" : \"example matcher\",\r\n  \"settings\" : {\r\n    \"type\" : \"object\",\r\n    \"properties\" : {\r\n      \"structuralFeatures\" : {\r\n        \"description\" : \"whether to use structural features or not\",\r\n        \"type\" : \"boolean\",\r\n        \"default\" : true\r\n      },\r\n      \"synonymExpansion\" : {\r\n        \"description\" : \"whether to do synonym expansion or not\",\r\n        \"type\" : \"boolean\",\r\n        \"default\" : true\r\n      }\r\n    }\r\n  }\r\n}, {\r\n  \"id\" : \"example-matcher\",\r\n  \"description\" : \"example matcher\",\r\n  \"settings\" : {\r\n    \"type\" : \"object\",\r\n    \"properties\" : {\r\n      \"structuralFeatures\" : {\r\n        \"description\" : \"whether to use structural features or not\",\r\n        \"type\" : \"boolean\",\r\n        \"default\" : true\r\n      },\r\n      \"synonymExpansion\" : {\r\n        \"description\" : \"whether to do synonym expansion or not\",\r\n        \"type\" : \"boolean\",\r\n        \"default\" : true\r\n      }\r\n    }\r\n  }\r\n} ]", List.class), HttpStatus.NOT_IMPLEMENTED);
-			} catch (IOException e) {
-				log.error("Couldn't serialize response for content type application/json", e);
-				return new ResponseEntity<List<Matcher>>(HttpStatus.INTERNAL_SERVER_ERROR);
-			}
+			//			try {
+
+			Matcher am = new Matcher();
+			am.setId("Automatic Matcher");
+			//				am.setSettings(settings); // settings as schema (can be external json)
+
+			List<Matcher> list = new ArrayList<Matcher>();
+			list.add(am);
+
+			return new ResponseEntity<>(list, HttpStatus.OK);
+
+			//				return new ResponseEntity<List<Matcher>>(objectMapper.readValue("[ {\r\n  \"id\" : \"example-matcher\",\r\n  \"description\" : \"example matcher\",\r\n  \"settings\" : {\r\n    \"type\" : \"object\",\r\n    \"properties\" : {\r\n      \"structuralFeatures\" : {\r\n        \"description\" : \"whether to use structural features or not\",\r\n        \"type\" : \"boolean\",\r\n        \"default\" : true\r\n      },\r\n      \"synonymExpansion\" : {\r\n        \"description\" : \"whether to do synonym expansion or not\",\r\n        \"type\" : \"boolean\",\r\n        \"default\" : true\r\n      }\r\n    }\r\n  }\r\n}, {\r\n  \"id\" : \"example-matcher\",\r\n  \"description\" : \"example matcher\",\r\n  \"settings\" : {\r\n    \"type\" : \"object\",\r\n    \"properties\" : {\r\n      \"structuralFeatures\" : {\r\n        \"description\" : \"whether to use structural features or not\",\r\n        \"type\" : \"boolean\",\r\n        \"default\" : true\r\n      },\r\n      \"synonymExpansion\" : {\r\n        \"description\" : \"whether to do synonym expansion or not\",\r\n        \"type\" : \"boolean\",\r\n        \"default\" : true\r\n      }\r\n    }\r\n  }\r\n} ]", List.class), HttpStatus.NOT_IMPLEMENTED);
+			//			} catch (IOException e) {
+			//				log.error("Couldn't serialize response for content type application/json", e);
+			//				return new ResponseEntity<List<Matcher>>(HttpStatus.INTERNAL_SERVER_ERROR);
+			//			}
 		}
 
 		return new ResponseEntity<List<Matcher>>(HttpStatus.NOT_IMPLEMENTED);
