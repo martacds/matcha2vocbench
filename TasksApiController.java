@@ -2,6 +2,7 @@ package io.swagger.api;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -51,7 +52,7 @@ public class TasksApiController implements TasksApi {
 
 	private final HttpServletRequest request;
 
-	private final Environment env;
+	private Environment env;
 
 	@org.springframework.beans.factory.annotation.Autowired
 	public TasksApiController(ObjectMapper objectMapper, HttpServletRequest request, Environment env) {
@@ -60,10 +61,8 @@ public class TasksApiController implements TasksApi {
 		this.env = env;
 	}
 
-	// TODO: implement for matcha
 	public ResponseEntity<Void> deleteTaskByID(@Parameter(in = ParameterIn.PATH, description = "Task ID", required=true, schema=@Schema()) @PathVariable("id") String id) {
 		String accept = request.getHeader("Accept");
-
 		// remove result files
 		File result = new File(env.getProperty("repository.path") +  "/results/" + id + ".owl");
 		if(result.delete()) {
@@ -107,18 +106,22 @@ public class TasksApiController implements TasksApi {
 	public ResponseEntity<List<Task>> getTasks() {
 		String accept = request.getHeader("Accept");
 		if (accept != null && accept.contains("application/json")) {
-			try {
-				return new ResponseEntity<List<Task>>(objectMapper.readValue("[ {\r\n  \"id\" : \"c27d77380cf4d0bcdd5529eef1f020871d5f95c2\",\r\n  \"leftDataset\" : \"http://example.org/void.ttl#EuroVoc\",\r\n  \"rightDataset\" : \"http://example.org/void.ttl#TESEO\",\r\n  \"submissionTime\" : \"202-02-10T18:00:00+01:00\",\r\n  \"startTime\" : \"202-02-10T18:00:30+01:00\",\r\n  \"status\" : \"running\",\r\n  \"progress\" : 60\r\n}, {\r\n  \"id\" : \"c27d77380cf4d0bcdd5529eef1f020871d5f95c2\",\r\n  \"leftDataset\" : \"http://example.org/void.ttl#EuroVoc\",\r\n  \"rightDataset\" : \"http://example.org/void.ttl#TESEO\",\r\n  \"submissionTime\" : \"202-02-10T18:00:00+01:00\",\r\n  \"startTime\" : \"202-02-10T18:00:30+01:00\",\r\n  \"status\" : \"running\",\r\n  \"progress\" : 60\r\n} ]", List.class), HttpStatus.NOT_IMPLEMENTED);
-			} catch (IOException e) {
-				log.error("Couldn't serialize response for content type application/json", e);
-				return new ResponseEntity<List<Task>>(HttpStatus.INTERNAL_SERVER_ERROR);
-			}
+
+			List<Task> list = new ArrayList<Task>();
+
+			return new ResponseEntity<List<Task>>(list, HttpStatus.OK);
+
+			//            try {
+				//                return new ResponseEntity<List<Task>>(objectMapper.readValue("[ {\r\n  \"id\" : \"c27d77380cf4d0bcdd5529eef1f020871d5f95c2\",\r\n  \"leftDataset\" : \"http://example.org/void.ttl#EuroVoc\",\r\n  \"rightDataset\" : \"http://example.org/void.ttl#TESEO\",\r\n  \"submissionTime\" : \"202-02-10T18:00:00+01:00\",\r\n  \"startTime\" : \"202-02-10T18:00:30+01:00\",\r\n  \"status\" : \"running\",\r\n  \"progress\" : 60\r\n}, {\r\n  \"id\" : \"c27d77380cf4d0bcdd5529eef1f020871d5f95c2\",\r\n  \"leftDataset\" : \"http://example.org/void.ttl#EuroVoc\",\r\n  \"rightDataset\" : \"http://example.org/void.ttl#TESEO\",\r\n  \"submissionTime\" : \"202-02-10T18:00:00+01:00\",\r\n  \"startTime\" : \"202-02-10T18:00:30+01:00\",\r\n  \"status\" : \"running\",\r\n  \"progress\" : 60\r\n} ]", List.class), HttpStatus.NOT_IMPLEMENTED);
+			//            } catch (IOException e) {
+			//                log.error("Couldn't serialize response for content type application/json", e);
+			//                return new ResponseEntity<List<Task>>(HttpStatus.INTERNAL_SERVER_ERROR);
+			//            }
 		}
 
 		return new ResponseEntity<List<Task>>(HttpStatus.NOT_IMPLEMENTED);
 	}
 
-	// TODO: implement for matcha
 	public ResponseEntity<Task> submitTask(@Parameter(in = ParameterIn.DEFAULT, description = "", schema=@Schema()) @Valid @RequestBody AlignmentPlan body) {
 		String accept = request.getHeader("Accept");
 		if (accept != null && accept.contains("application/json")) {
@@ -129,11 +132,11 @@ public class TasksApiController implements TasksApi {
 				@Valid
 				Settings s = body.getSettings(); // any json
 				@Valid
-				AlignmentPlanMatcherDefinition md = body.getMatcherDefinition();
-				System.out.println("printing settings");
-				System.out.println(s);
-				System.out.println("printing matcher definition");
-				System.out.println(md);
+//				AlignmentPlanMatcherDefinition md = body.getMatcherDefinition();
+//				System.out.println("printing settings");
+//				System.out.println(s);
+//				System.out.println("printing matcher definition");
+//				System.out.println(md);
 
 				// get data for matching task
 				String source = sd.getLeftDataset().getAtId(); // need the source URI
@@ -170,7 +173,7 @@ public class TasksApiController implements TasksApi {
 				task.setRightDataset(sd.getRightDataset().getAtId());
 				task.setStatus("completed");
 
-				return new ResponseEntity<Task>(task, HttpStatus.CREATED);
+				return new ResponseEntity<Task>(task, HttpStatus.OK);
 			} catch (IOException e) {
 				log.error("Couldn't serialize response for content type application/json", e);
 				return new ResponseEntity<Task>(HttpStatus.INTERNAL_SERVER_ERROR);
